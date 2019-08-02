@@ -1,3 +1,5 @@
+# Main.c
+```C
 #include <stdint.h>
 
 // vga1() escribe una cadena al comienzo del buffer VGA. La
@@ -36,3 +38,4 @@ void _start(void) {
 
     __asm__("hlt");
 }
+```
