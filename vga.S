@@ -22,7 +22,30 @@ exit:
 
 .globl vga2
 vga2:
+  movl 8(%esp),%eax	//Cargo el valor de la columna de inicio
+  cmp %eax, 0x00	// Si es mayor a 0 calculo desde el inicio sino desde el final
+  jge calcInicioDesdeInicio
+  jl calcInicioDesdeFinal
+
+print:
+  movl $0x642F,(%eax)
+  movl $0xb8165,%eax
   ret
+
+
+calcInicioDesdeInicio:
+  // En %eax ya se debe encontrar cargado
+  // el numero de fila para iniciar 
+  movl $0x50,%ecx	//Cargo el 50 (80 en DEC) por %ECX
+  mul %ecx		//multiplico la fila para obtener el inicio
+  movl 9(%esp),%ebx 	//Cargo la columna
+  add %ebx, %eax	//Sumo el offset de columnas
+  add 0xb8000, %eax	//Sumo la direccion de inicio del buffer
+  jmp print 		//Vuelvo para imprimir
+
+calcInicioDesdeFinal:
+  add $0x19,%eax	//Le sumo 25 al numero negativo para que me de la fila de inicio
+  jmp calcInicioDesdeInicio
 
 
 .globl vga3
