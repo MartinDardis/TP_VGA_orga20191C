@@ -22,31 +22,43 @@ exit:
 
 .globl vga2
 vga2:
-  movl 8(%esp),%eax	//Cargo el valor de la columna de inicio
-  cmp %eax, 0x00	// Si es mayor a 0 calculo desde el inicio sino desde el final
-  jge calcInicioDesdeInicio
+  movl $0x00,%ebx
+  movw 8(%esp),%cx	//Cargo el valor de la fila
+  movw 10(%esp),%bx
+  cmp %eax,0x00		// Si la fila es mayor a 0 calculo desde el inicio sino desde el final
   jl calcInicioDesdeFinal
+  jmp calcInicioDesdeInicio
+print2:
+  movl 4(%esp),%edx	//Cargo el inicio del string
+  movl 16(%esp),%ebx     //Cargo el codigo de color
+go2:
+  movb (%edx), %dl      //cargo el caracter en %dl
+  test %dl, %dl         //Verifico si %dl es fin de linea y salgo si lo es
+  je  exit
+  movb %dl,(%eax)       //Escribo la letra
+  movb %ebx,1(%eax)     //seteo el color
+  add $0x1, %edx        //incremento el contador
+  add $0x2, %eax        //incremento la dir del buffer
+  jmp go2 
 
-print:
-  movl $0x642F,(%eax)
-  movl $0xb8165,%eax
-  ret
-
-
+calcInicioDesdeFinal:
+  not %cx
+  inc %cx
+  movl $25,%ecx
+  sub  %ax,%cx
 calcInicioDesdeInicio:
   // En %eax ya se debe encontrar cargado
   // el numero de fila para iniciar 
-  movl $0x50,%ecx	//Cargo el 50 (80 en DEC) por %ECX
-  mul %ecx		//multiplico la fila para obtener el inicio
-  movl 9(%esp),%ebx 	//Cargo la columna
-  add %ebx, %eax	//Sumo el offset de columnas
-  add 0xb8000, %eax	//Sumo la direccion de inicio del buffer
-  jmp print 		//Vuelvo para imprimir
-
-calcInicioDesdeFinal:
-  add $0x19,%eax	//Le sumo 25 al numero negativo para que me de la fila de inicio
-  jmp calcInicioDesdeInicio
-
+  movl $0xb8000,%eax
+mult:
+  test %cx,%cx
+  jz sal
+  add $80,%eax        //Cargo el 50 (80 en DEC) por %ECX
+  dec %cx
+  jmp mult		//multiplico la fila para obtener el inicio
+sal:
+  add %bx,%ax	//Sumo el offset de columnas
+  jmp print2 		//Vuelvo para imprimir
 
 .globl vga3
 vga3:

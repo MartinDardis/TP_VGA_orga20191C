@@ -25,6 +25,7 @@ void _start(void) {
     vga1("Hola desde vga1(). Se imprime al comienzo del buffer VGA.", 0x2F);
 
     char *pos1 = vga2("Hola desde vga2(5, 20).", 5, 20, 0x4F);
+
     char *pos2 = vga2("Hola desde vga2(-16, 10).", -16, 10, 0x4F);
 
     VGAPOS = pos1;
