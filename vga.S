@@ -69,27 +69,31 @@ sumColumnas:
 
 .globl vga3
 vga3:
-  movl 8(%esp),%ebx     // Obtengo el color y lo guardo en %ebx
-  movl (%ebp),%eax      // Cargo el inicio del buffer donde escribir
-  movl 4(%esp),%ecx     // cargo el inicio del string
+  push %ebx
+  movl VGAPOS,%eax
+  movl 8(%esp),%ecx     // cargo el inicio del string
 go3:
   movb (%ecx), %dl      //cargo el caracter en %dl
   test %dl, %dl         //Verifico si %dl es fin de linea y salgo si lo es
-  je  exit
+  je  exit3
   cmp $0x0A,%dl
   je saltoLinea
-  movb %dl,(%eax)       //Escribo la letra
-  movl %ebx,1(%eax)     //seteo el color
+  movb %dl,(%eax) 	 //Escribo la letra
+  movb 12(%esp),%dl
+  movb %dl,1(%eax)     //seteo el color
   add $0x2, %eax        //incremento la dir del buffer
 incCaracter3:
   add $0x1, %ecx        //incremento el contador
   jmp go3
+exit3:
+  movl %eax,VGAPOS
+  pop %ebx
+  ret
 
 saltoLinea:
+  movl VGAPOS,%eax
   add $0xA0, %eax
   jmp incCaracter3
-
-
 
 
 // Para el arranque con QEMU.
