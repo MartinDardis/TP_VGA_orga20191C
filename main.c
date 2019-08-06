@@ -29,11 +29,11 @@ void _start(void) {
     char *pos2 = vga2("Hola desde vga2(-16, 10).", -16, 10, 0x4F);
 
     VGAPOS = pos1;
-    vga3("Hola,\nciao.", 0xE0);
-    vga3("Falta poco para terminar.", 0x3F);
+//    vga3("Hola,\nciao.", 0xE0);
+//    vga3("Falta poco para terminar.", 0x3F);
 
     VGAPOS = pos2 + 162;
-    vga3("Byeeee!", 0xD0);
+//    vga3("Byeeee!", 0xD0);
 
     __asm__("hlt");
 }

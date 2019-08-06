@@ -4,9 +4,10 @@
 //El caracter en la posicion y en la posicion +1 el
 //codigo del color. Ej: 8000 la H y 8001 "2F"
 vga1:
-  movl 8(%esp),%eax 	// Obtengo el color y lo guardo en %eax
+  push %ebx
+  movl 12(%esp),%eax 	// Obtengo el color y lo guardo en %eax
   movl $0xb8000,%ebx    // Cargo el inicio del buffer donde escribir
-  movl 4(%esp),%ecx     // cargo el inicio del string
+  movl 8(%esp),%ecx     // cargo el inicio del string
 go1:
   movb (%ecx), %dl	//cargo el caracter en %dl
   test %dl, %dl		//Verifico si %dl es fin de linea y salgo si lo es
@@ -17,28 +18,29 @@ go1:
   add $0x2, %ebx	//incremento la dir del buffer
   jmp go1
 exit:
+  pop %ebx
   ret
 
 
 .globl vga2
 vga2:
-  movb 8(%esp),%cl	//Cargo el valor de la fila
-  movb 12(%esp),%bl	//Cargo el offset de columnas
-  cmp $0x00,%cl		// Si la fila es mayor a 0 calculo desde el inicio sino desde el final
+  push %ebx
+  movb 12(%esp),%cl	//Cargo el valor de la fila
+  movb 16(%esp),%bl	//Cargo el offset de columnas
+  cmpb $0x00,%cl	// Si la fila es mayor a 0 calculo desde el inicio sino desde el final
   jl calcInicioDesdeFinal
   jmp calcInicioDesdeInicio
 print2:
-  movl 4(%esp),%ecx	//Cargo el inicio del string
-  movl 16(%esp),%ebx     //Cargo el codigo de color 
+  movl 8(%esp),%ecx	//Cargo el inicio del string
+  movl 20(%esp),%ebx     //Cargo el codigo de color 
 go2:
   movb (%ecx), %dl      //cargo el caracter en %dl
   test %dl, %dl         //Verifico si %dl es fin de linea y salgo si lo es
   je  exit
   movb %dl,(%eax)       //Escribo la letra
-  movl %ebx,1(%eax)     //seteo el color
-  add $0x1, %ecx        //incremento el puntero del string
+  movb %bl,1(%eax)     //seteo el color
+  add $0x1,%ecx        	//incremento el puntero del string
   add $0x2, %eax        //incremento la dir del buffer
-  movb $0x00,%dl
   jmp go2 
 
 // %cl contiene el numero de fila
