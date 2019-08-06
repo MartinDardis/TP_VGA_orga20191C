@@ -19,7 +19,7 @@ void *vga2(const char *msg, int8_t linea, uint8_t col, uint8_t color);
 void vga3(const char *msg, uint8_t color);
 
 // La variable global para vga3().
-char *VGAPOS;
+char *VGAPOS ;
 
 void _start(void) {
     vga1("Hola desde vga1(). Se imprime al comienzo del buffer VGA.", 0x2F);
