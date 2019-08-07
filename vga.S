@@ -32,7 +32,7 @@ vga2:
   jmp calcInicioDesdeInicio
 print2:
   movl 8(%esp),%ecx	//Cargo el inicio del string
-  movl 20(%esp),%ebx     //Cargo el codigo de color 
+  movl 20(%esp),%ebx     //Cargo el codigo de color
 go2:
   movb (%ecx), %dl      //cargo el caracter en %dl
   test %dl, %dl         //Verifico si %dl es fin de linea y salgo si lo es
@@ -41,7 +41,7 @@ go2:
   movb %bl,1(%eax)     //seteo el color
   add $0x1,%ecx        	//incremento el puntero del string
   add $0x2, %eax        //incremento la dir del buffer
-  jmp go2 
+  jmp go2
 
 // %cl contiene el numero de fila
 // %bl el offset de columna
@@ -52,19 +52,19 @@ calcInicioDesdeFinal:
   movb %al,%cl          // Actualizo %cl con el nuevo valor de columna de inicio
 calcInicioDesdeInicio:
   // En %cx ya se debe encontrar cargado
-  // el numero de fila para iniciar 
+  // el numero de fila para iniciar
   movl $0xb8000,%eax	//Cargo la direccion base
 sumFilas:		//Mientras que %cl no sea 0, sumo una fila
   test %cl,%cl
   je sumColumnas
   add $0xA0,%eax        //Incremento una fila 80 celdas = 160 bytes
   dec %cl		//Decremento la cant de filas restantes
-  jmp sumFilas		
+  jmp sumFilas
 sumColumnas:
   test %bl,%bl		//Sumo el offset de columnas
   je print2
   add $0x02,%eax
-  dec %bl	
+  dec %bl
   jmp sumColumnas	//Vuelvo para imprimir
 
 .globl vga3
@@ -93,6 +93,8 @@ exit3:
 saltoLinea:
   movl VGAPOS,%eax
   add $0xA0, %eax
+  movl %eax,VGAPOS // si hay otro salto de linea necesito que VGAPOS este actualizado
+  				   // a la linea actual
   jmp incCaracter3
 
 
